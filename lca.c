@@ -1,11 +1,11 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#define GRID_SIZE 40
+#define GRID_SIZE 10
 #define EMPTY 0x00
 #define WALL 0x40
 #define NUM_DIRECTIONS 6
-#define ITERATIONS 50
+#define ITERATIONS 10
 
 typedef unsigned char byte;
 
@@ -19,7 +19,6 @@ int directions[2][6][2] = {
 
 void initialize_grid() {
     int i, j;
-    // srand(time(NULL));
 
     for (i = 0; i < GRID_SIZE; i++) {
         for (j = 0; j < GRID_SIZE; j++) {
@@ -28,22 +27,22 @@ void initialize_grid() {
                 aux_grid[i][j] = WALL;
             }
             else {
-                if (drand48() < 0.05) {
-                    int dir = (int) (drand48() * 6);
-                    grid[i][j] = 0x01 << dir;
-                } else {
-                    grid[i][j] = EMPTY;  // Empty grid point
-                }
+                // if (drand48() < 0.05) {
+                //     int dir = (int) (drand48() * 6);
+                //     grid[i][j] = 0x01 << dir;
+                // } else {
+                //     grid[i][j] = EMPTY;  // Empty grid point
+                // }
 
-                // grid[i][j] = EMPTY;  // Empty grid point
+                grid[i][j] = EMPTY;  // Empty grid point
                 aux_grid[i][j] = EMPTY;
             }
         }
     }
 
-    // grid[2][1] = 0x01; // To the right
-    // grid[2][3] = 0x08; // To the left
-    // grid[3][1] = 0x20; // Down and right
+    grid[2][1] = 0x01; // To the right
+    grid[2][3] = 0x08; // To the left
+    grid[3][1] = 0x20; // Down and right
 
 }
 
@@ -58,11 +57,8 @@ void print_grid() {
                 printf("  ");
             else if (grid[i][j] == WALL)
                 printf("# ");
-            else if (!(grid[i][j] & (grid[i][j] - 1)))
-                // Check if power of 2 -> single particle
-                printf("* ");
             else
-                printf("@ ");
+                printf("* ");
         }
         printf("\n");
     }
@@ -79,11 +75,8 @@ void print_grid_animation() {
                 printf("  ");
             else if (grid[i][j] & WALL)
                 printf("# ");
-            else // if (!(grid[i][j] & (grid[i][j] - 1)))
-                // Check if power of 2 -> single particle
+            else 
                 printf("* ");
-            // else
-            //     printf("@ ");
         }
         // TODO: remove trailing comma after last frame
         if (i == GRID_SIZE - 1)
@@ -143,13 +136,6 @@ void handle_collisions(int i, int j) {
     }
 }
 
-void handle_wall(int i, int j) {
-    // No-slip condition
-    byte velocity_bits = aux_grid[i][j] % WALL;
-
-    grid[i][j] = (velocity_bits << 3) % WALL | (velocity_bits >> 3) % WALL| WALL;
-}
-
 void update() {
     int i, j;
 
@@ -181,10 +167,7 @@ void update() {
     for (i = 0; i < GRID_SIZE; i++) {
         for (j = 0; j < GRID_SIZE; j++) {
 
-            if (aux_grid[i][j] & WALL)
-                handle_wall(i, j);
-            else
-                handle_collisions(i, j);
+            handle_collisions(i, j);
 
             if (aux_grid[i][j] & WALL)
                 aux_grid[i][j] = WALL;
@@ -196,14 +179,12 @@ void update() {
 
 int main() {
     initialize_grid();
-    // printf("Initial grid:\n");
-    print_grid_animation();
+    print_grid();
 
     int i;
     for (i = 0; i < ITERATIONS; i++) {
-        // printf("\nStep %d:\n", i + 1);
         update();
-        print_grid_animation();
+        print_grid();
     }
 
     return 0;
