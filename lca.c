@@ -1,14 +1,13 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#define EMPTY 0x00
-#define WALL 0x40
+#include "common.h"
+
 #define NUM_DIRECTIONS 6
 #define ITERATIONS 10
 
 #define ind2d(i,j) (i)*(grid_size)+j
 
-typedef unsigned char byte;
 
 /*
    2   1
