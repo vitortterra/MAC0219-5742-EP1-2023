@@ -11,6 +11,7 @@
 #define MIN_GRID_SIZE 8
 #define MAX_GRID_SIZE 4096
 #define NUM_DIRECTIONS 6
+#define ITERATIONS 50
 
 // Conveniente, mas exige grid_size definida localmente
 #define ind2d(i,j) ((i)*(grid_size)+(j))
