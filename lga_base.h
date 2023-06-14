@@ -10,6 +10,8 @@
 #define WALL 0x40
 #define MIN_GRID_SIZE 8
 #define MAX_GRID_SIZE 4096
+#define MIN_NUM_THREADS 1
+#define MAX_NUM_THREADS 32
 #define NUM_DIRECTIONS 6
 #define ITERATIONS 50
 
