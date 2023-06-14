@@ -146,7 +146,11 @@ static inline bool inbounds(int i, int j, int grid_size) {
     return i >= 0 && i < grid_size && j >= 0 && j < grid_size;
 }
 
-byte handle_collisions(byte cell) {
+byte handle_wall_collision(byte dir_mask) {
+    return ((dir_mask << 3) | (dir_mask >> 3)) % WALL;
+}
+
+byte handle_collision(byte cell) {
     switch (cell) {
         // Colisao entre duas particulas
         case 0x09:
@@ -199,11 +203,11 @@ void update(byte* grid_in, byte* grid_out, int grid_size) {
 
                     if (inbounds(n_i, n_j, grid_size)) {
                         // TODO fix wall behavior
-                        if (grid_in[ind2d(n_i,n_j)] == WALL) {
-                            grid_out[ind2d(i,j)] |= ((dir_mask << 3) | (dir_mask >> 3)) % WALL;
-                        } else {
+                        if (grid_in[ind2d(n_i,n_j)] == WALL)
+                            grid_out[ind2d(i,j)] |= handle_wall_collision(dir_mask);
+                        else
                             grid_out[ind2d(n_i,n_j)] |= dir_mask;
-                        }
+
                         grid_in[ind2d(i,j)] &= ~dir_mask;
                     }
                 }
@@ -214,7 +218,7 @@ void update(byte* grid_in, byte* grid_out, int grid_size) {
     // Colisoes
     for (int i = 0; i < grid_size; i++) {
         for (int j = 0; j < grid_size; j++) {
-            grid_out[ind2d(i,j)] = handle_collisions(grid_out[ind2d(i,j)]);
+            grid_out[ind2d(i,j)] = handle_collision(grid_out[ind2d(i,j)]);
         }
     }
 }
