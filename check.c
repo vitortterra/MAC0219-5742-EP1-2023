@@ -12,7 +12,7 @@ void parse_arguments(int argc, char* argv[], int* grid_size_ptr, int* num_thread
     int ret;
 
     if (argc != 5){
-        printf("usage: ./check --grid_size <grid_size> --num_threads <num_threads>\n");
+        printf("Uso: ./check --grid_size <grid_size> --num_threads <num_threads>\n");
         exit(EXIT_FAILURE);
     }
 
