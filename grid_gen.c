@@ -7,9 +7,8 @@
 #define DENSITY 0.10
 
 // Procedimento auxiliar para inicializar o gerador de 
-// numeros pseudo-aleatorios (PRNG) utilizado no calculo de pi.
+// numeros pseudo-aleatorios (PRNG).
 // Utiliza-se o Unix time em microssegundos (us) como seed.
-
 void initialize_prng(void)
 {
     struct timeval tv;
@@ -22,16 +21,17 @@ void initialize_prng(void)
 }
 
 void generate_grid(byte* grid, int grid_size) {
-    int dir = 0;
+    int dir;
     
     for (int i = 0; i < grid_size; i++) {
         for (int j = 0; j < grid_size; j++) {
             if (i == 0 || j == 0 || i == grid_size - 1 || j == grid_size - 1) {
                 grid[ind2d(i,j)] = WALL;
             } else {
+                // https://c-faq.com/lib/randrange.html
                 if (rand() < DENSITY * RAND_MAX) {
+                    dir = rand() / (RAND_MAX / NUM_DIRECTIONS + 1);
                     grid[ind2d(i,j)] = 0x01 << dir;
-                    dir = (dir+1) % NUM_DIRECTIONS;
                 } else {
                     grid[ind2d(i,j)] = EMPTY;
                 }
@@ -87,6 +87,8 @@ int main(int argc, char* argv[]) {
         fprintf(stderr, "Error allocating grid\n");
         exit(EXIT_FAILURE);
     }
+
+    initialize_prng();
 
     generate_grid(grid, grid_size);
 

@@ -24,7 +24,7 @@ void parse_arguments(int argc, char* argv[], int* grid_size_ptr) {
     }
 
     if (*grid_size_ptr < MIN_GRID_SIZE || *grid_size_ptr > MAX_GRID_SIZE) {
-        printf("Invalid grid_size %d (min=%d, max=%d)\n", 
+        printf("Invalid grid_size %d (min=%d, max=%d)\n",
             *grid_size_ptr, MIN_GRID_SIZE, MAX_GRID_SIZE);
         exit(EXIT_FAILURE);
     }
@@ -41,8 +41,6 @@ int main(int argc, char* argv[]) {
     grid_2 = allocate_grid(grid_size);
 
     simulate_seq(grid_1, grid_2, grid_size);
-
-    print_grid(grid_1, grid_size);
 
     free(grid_1);
     free(grid_2);
