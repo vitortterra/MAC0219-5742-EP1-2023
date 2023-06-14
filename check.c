@@ -67,10 +67,12 @@ int main(int argc, char* argv[]) {
     grid_1 = allocate_grid(grid_size);
     grid_2 = allocate_grid(grid_size);
 
+    initialize_grids(grid_ref, grid_2, grid_size);
     simulate_seq(grid_ref, grid_2, grid_size);
 
     printf("grid_size=%d, num_threads=%d\n", grid_size, num_threads);
 
+    initialize_grids(grid_1, grid_2, grid_size);
     simulate_omp(grid_1, grid_2, grid_size, num_threads);
 
     if (are_grids_equal(grid_ref, grid_1, grid_size))
@@ -78,6 +80,7 @@ int main(int argc, char* argv[]) {
     else
         printf("Resultado OpenMP DIFERENTE do sequencial\n");
     
+    initialize_grids(grid_1, grid_2, grid_size);
     simulate_pth(grid_1, grid_2, grid_size, num_threads);
 
     if (are_grids_equal(grid_ref, grid_1, grid_size))

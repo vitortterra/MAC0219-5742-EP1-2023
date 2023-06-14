@@ -34,8 +34,6 @@ static void update(byte* grid_in, byte* grid_out, int grid_size) {
 }
 
 void simulate_omp(byte* grid_1, byte* grid_2, int grid_size, int num_threads) {
-    initialize_grids(grid_1, grid_2, grid_size);
-
     for (int i = 0; i < ITERATIONS/2; i++) {
         update(grid_1, grid_2, grid_size);
         update(grid_2, grid_1, grid_size);
