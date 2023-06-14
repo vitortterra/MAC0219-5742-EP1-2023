@@ -38,7 +38,8 @@ void parse_arguments(int argc, char* argv[], int* grid_size_ptr) {
     }
 
     if (*grid_size_ptr < MIN_GRID_SIZE || *grid_size_ptr > MAX_GRID_SIZE) {
-        printf("Invalid grid_size %d (min=%d, max=%d)\n", *grid_size_ptr, MIN_GRID_SIZE, MAX_GRID_SIZE);
+        printf("Invalid grid_size %d (min=%d, max=%d)\n", 
+            *grid_size_ptr, MIN_GRID_SIZE, MAX_GRID_SIZE);
         exit(EXIT_FAILURE);
     }
 }
@@ -145,37 +146,32 @@ static inline bool inbounds(int i, int j, int grid_size) {
     return i >= 0 && i < grid_size && j >= 0 && j < grid_size;
 }
 
-void handle_collisions(int i, int j, byte* grid, int grid_size) {
-    switch (grid[ind2d(i,j)]) {
+byte handle_collisions(byte cell) {
+    switch (cell) {
         // Colisao entre duas particulas
         case 0x09:
-            grid[ind2d(i,j)] = 0x12;
-            break;
+            return 0x12;
         case 0x12:
-            grid[ind2d(i,j)] = 0x28;
-            break;
+            return 0x28;
         case 0x28:
-            grid[ind2d(i,j)] = 0x09;
-            break;
+            return 0x09;
 
         // Colisao entre tres particulas
         case 0x15:
-            grid[ind2d(i,j)] = 0x2A;
-            break;
+            return 0x2A;
         case 0x2A:
-            grid[ind2d(i,j)] = 0x15;
-            break;
+            return 0x15;
 
         // Colisao entre quatro particulas
         case 0x36:
-            grid[ind2d(i,j)] = 0x2D;
-            break;
+            return 0x2D;
         case 0x2D:
-            grid[ind2d(i,j)] = 0x1B;
-            break;
+            return 0x1B;
         case 0x1B:
-            grid[ind2d(i,j)] = 0x36;
-            break;
+            return 0x36;
+
+        default:
+            return cell;
     }
 }
 
@@ -218,7 +214,7 @@ void update(byte* grid_in, byte* grid_out, int grid_size) {
     // Colisoes
     for (int i = 0; i < grid_size; i++) {
         for (int j = 0; j < grid_size; j++) {
-            handle_collisions(i, j, grid_out, grid_size);
+            grid_out[ind2d(i,j)] = handle_collisions(grid_out[ind2d(i,j)]);
         }
     }
 }
