@@ -1,8 +1,8 @@
+#include "lga_base.h"
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <sys/time.h>
-
-#include "common.h"
 
 #define DENSITY 0.10
 
@@ -20,7 +20,6 @@ void initialize_prng(void)
 
     srand(total_us);
 }
-
 
 void generate_grid(byte* grid, int grid_size) {
     int dir = 0;

@@ -1,14 +1,23 @@
 CC     = gcc
 CFLAGS = -Wall -pedantic -O2 -std=c11
 
-all: lca grid_gen
+all: check grid_gen
 
-lca: lca.c common.h
-	$(CC) $(CFLAGS) -o $@ $<
+check: check.o lga_base.o
+	$(CC) $(CFLAGS) -o $@ $^
 
-grid_gen: grid_gen.c common.h
-	$(CC) $(CFLAGS) -o $@ $<
+check.o: check.c lga_base.o
+	$(CC) $(CFLAGS) -c $<
+
+grid_gen: grid_gen.o lga_base.o
+	$(CC) $(CFLAGS) -o $@ $^
+
+grid_gen.o: grid_gen.c lga_base.o
+	$(CC) $(CFLAGS) -c $<
+
+lga_base.o: lga_base.c lga_base.h
+	$(CC) $(CFLAGS) -c $<
 
 .PHONY: clean
 clean:
-	rm lca grid_gen
+	rm *.o check grid_gen
