@@ -4,7 +4,7 @@
 
 #include "common.h"
 
-#define DENSITY 0.05
+#define DENSITY 0.10
 
 // Procedimento auxiliar para inicializar o gerador de 
 // numeros pseudo-aleatorios (PRNG) utilizado no calculo de pi.

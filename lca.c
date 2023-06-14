@@ -5,7 +5,7 @@
 
 #include "common.h"
 
-#define ITERATIONS 5
+#define ITERATIONS 50
 
 /*
    2   1
@@ -111,27 +111,28 @@ void print_grid(byte* grid, int grid_size) {
     }
 }
 
-// void print_grid_animation() {
-//     int i, j;
-//     for (i = 0; i < GRID_SIZE; i++) {
-//         printf("\"");
-//         if (i % 2 == 0)
-//             printf(" ");
-//         for (j = 0; j < GRID_SIZE; j++) {
-//             if (grid[i][j] == EMPTY)
-//                 printf("  ");
-//             else if (grid[i][j] & WALL)
-//                 printf("# ");
-//             else 
-//                 printf("* ");
-//         }
-//         // TODO: remove trailing comma after last frame
-//         if (i == GRID_SIZE - 1)
-//             printf("\"+a,\n");
-//         else
-//             printf("\"+a+\n");
-//     }
-// }
+void print_grid_animation(byte* grid, int grid_size) {
+    for (int i = 0; i < grid_size; i++) {
+        printf("\"");
+        if (i % 2 == 0)
+            printf(" ");
+        for (int j = 0; j < grid_size; j++) {
+            byte c = grid[ind2d(i,j)];
+
+            if (c == EMPTY)
+                printf("  ");
+            else if (c == WALL)
+                printf("# ");
+            else
+                printf("* ");
+        }
+        // TODO: remove trailing comma after last frame
+        if (i == grid_size - 1)
+            printf("\"+a,\n");
+        else
+            printf("\"+a+\n");
+    }
+}
 
 void print_grid_numbers(byte* grid, int grid_size) {
     for (int i = 0; i < grid_size; i++) {
@@ -146,11 +147,52 @@ static inline bool inbounds(int i, int j, int grid_size) {
     return i >= 0 && i < grid_size && j >= 0 && j < grid_size;
 }
 
-byte handle_wall_collision(byte dir_mask) {
-    return ((dir_mask << 3) | (dir_mask >> 3)) % WALL;
+void wall_collision(int i, int j, byte* grid_out, int grid_size, int dir) {
+    // Reflexao simples:
+    // byte dir_mask = 0x01 << dir;
+    // grid_out[ind2d(i,j)] |= ((dir_mask << 3) | (dir_mask >> 3)) % WALL;
+
+    if (dir == 0) {
+        grid_out[ind2d(i,j)] |= 0x08;
+    }
+    else if (dir == 1) {
+        if (inbounds(i-2, j, grid_size) && grid_out[ind2d(i-2,j)] != WALL)
+            grid_out[ind2d(i-2,j)] |= 0x04;
+        else if (inbounds(i, j+1, grid_size) && grid_out[ind2d(i,j+1)] != WALL)
+            grid_out[ind2d(i,j+1)] |= 0x20;
+        else
+            grid_out[ind2d(i,j)] |= 0x10;
+
+    } else if (dir == 2) {
+        if (inbounds(i-2, j, grid_size) && grid_out[ind2d(i-2,j)] != WALL)
+            grid_out[ind2d(i-2,j)] |= 0x02;
+        else if (inbounds(i, j-1, grid_size) && grid_out[ind2d(i,j-1)] != WALL)
+            grid_out[ind2d(i,j-1)] |= 0x10;
+        else
+            grid_out[ind2d(i,j)] |= 0x20;
+
+    } else if (dir == 3) {
+        grid_out[ind2d(i,j)] |= 0x01;
+
+    } else if (dir == 4) {
+        if (inbounds(i+2, j, grid_size) && grid_out[ind2d(i+2,j)] != WALL)
+            grid_out[ind2d(i+2,j)] |= 0x20;
+        else if (inbounds(i, j-1, grid_size) && grid_out[ind2d(i,j-1)] != WALL)
+            grid_out[ind2d(i,j-1)] |= 0x04;
+        else
+            grid_out[ind2d(i,j)] |= 0x02;
+
+    } else if (dir == 5) {
+        if (inbounds(i+2, j, grid_size) && grid_out[ind2d(i+2,j)] != WALL)
+            grid_out[ind2d(i+2,j)] |= 0x10;
+        else if (inbounds(i, j+1, grid_size) && grid_out[ind2d(i,j+1)] != WALL)
+            grid_out[ind2d(i,j+1)] |= 0x02;
+        else
+            grid_out[ind2d(i,j)] |= 0x04;
+    }
 }
 
-byte handle_collision(byte cell) {
+byte particles_collision(byte cell) {
     switch (cell) {
         // Colisao entre duas particulas
         case 0x09:
@@ -183,11 +225,9 @@ void update(byte* grid_in, byte* grid_out, int grid_size) {
     // Propagacao
     for (int i = 0; i < grid_size; i++) {
         for (int j = 0; j < grid_size; j++) {
-            int dir;
-
             // Para cada celula, para cada direcao, verifica se
             // ha particula indo naquela direcao
-            for (dir = 0; dir < NUM_DIRECTIONS; dir++) {
+            for (int dir = 0; dir < NUM_DIRECTIONS; dir++) {
                 byte dir_mask = 0x01 << dir;
 
                 // Caso haja uma particula indo na direcao dir,
@@ -202,9 +242,8 @@ void update(byte* grid_in, byte* grid_out, int grid_size) {
                     int n_j = j + dj;
 
                     if (inbounds(n_i, n_j, grid_size)) {
-                        // TODO fix wall behavior
                         if (grid_in[ind2d(n_i,n_j)] == WALL)
-                            grid_out[ind2d(i,j)] |= handle_wall_collision(dir_mask);
+                            wall_collision(i, j, grid_out, grid_size, dir);
                         else
                             grid_out[ind2d(n_i,n_j)] |= dir_mask;
 
@@ -218,7 +257,7 @@ void update(byte* grid_in, byte* grid_out, int grid_size) {
     // Colisoes
     for (int i = 0; i < grid_size; i++) {
         for (int j = 0; j < grid_size; j++) {
-            grid_out[ind2d(i,j)] = handle_collision(grid_out[ind2d(i,j)]);
+            grid_out[ind2d(i,j)] = particles_collision(grid_out[ind2d(i,j)]);
         }
     }
 }
@@ -235,13 +274,13 @@ int main(int argc, char* argv[]) {
 
     initialize_grids(grid_1, grid_2, grid_size);
 
-    print_grid(grid_1, grid_size);
+    print_grid_animation(grid_1, grid_size);
 
     for (int i = 0; i < ITERATIONS; i++) {
         update(grid_1, grid_2, grid_size);
-        print_grid(grid_2, grid_size);
+        print_grid_animation(grid_2, grid_size);
         update(grid_2, grid_1, grid_size);
-        print_grid(grid_1, grid_size);
+        print_grid_animation(grid_1, grid_size);
     }
 
     free(grid_1);
