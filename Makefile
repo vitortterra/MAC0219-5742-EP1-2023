@@ -3,15 +3,12 @@ CFLAGS = -Wall -pedantic -O2 -std=c11
 
 all: lca grid_gen
 
-lca: lca.c common.o
+lca: lca.c common.h
 	$(CC) $(CFLAGS) -o $@ $<
 
-grid_gen: grid_gen.c common.o
+grid_gen: grid_gen.c common.h
 	$(CC) $(CFLAGS) -o $@ $<
-
-common.o: common.h
-	$(CC) $(CFLAGS) -c $<
 
 .PHONY: clean
 clean:
-	rm *.o lca grid_gen
+	rm lca grid_gen
