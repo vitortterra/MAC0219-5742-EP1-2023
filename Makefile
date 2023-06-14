@@ -1,6 +1,8 @@
 CC     = gcc
 CFLAGS = -Wall -pedantic -O2 -std=c11
 
+all: lca grid_gen
+
 lca: lca.c common.o
 	$(CC) $(CFLAGS) -o $@ $<
 

@@ -3,11 +3,7 @@
 
 #include "common.h"
 
-#define NUM_DIRECTIONS 6
 #define ITERATIONS 10
-
-#define ind2d(i,j) (i)*(grid_size)+j
-
 
 /*
    2   1
@@ -43,23 +39,26 @@ void read_grid_from_file(byte* grid, int grid_size) {
     fclose(file_ptr);
 }
 
-// void print_grid() {
-//     int i, j;
-//     for (i = 0; i < GRID_SIZE; i++) {
-//         if (i % 2 == 0)
-//             printf(" ");
+void print_grid(byte* grid, int grid_size) {
+    for (int i = 0; i < grid_size; i++) {
 
-//         for (j = 0; j < GRID_SIZE; j++) {
-//             if (grid[i][j] == EMPTY)
-//                 printf("  ");
-//             else if (grid[i][j] == WALL)
-//                 printf("# ");
-//             else
-//                 printf("* ");
-//         }
-//         printf("\n");
-//     }
-// }
+        // Para ter aparencia hexagonal
+        if (i % 2 == 0)
+            printf(" ");
+
+        for (int j = 0; j < grid_size; j++) {
+            byte c = grid[ind2d(i,j)];
+
+            if (c == EMPTY)
+                printf("  ");
+            else if (c == WALL)
+                printf("# ");
+            else
+                printf("* ");
+        }
+        printf("\n");
+    }
+}
 
 // void print_grid_animation() {
 //     int i, j;
@@ -189,7 +188,7 @@ int main(int argc, char* argv[]) {
         fprintf(stderr, "Error reading grid_size\n");
         exit(EXIT_FAILURE);
     }
-    if (grid_size < 16 && grid_size > 4096) {
+    if (grid_size < MIN_GRID_SIZE || grid_size > MAX_GRID_SIZE) {
         printf("Invalid grid_size %d\n", grid_size);
         exit(EXIT_FAILURE);
     }
@@ -208,6 +207,8 @@ int main(int argc, char* argv[]) {
     //     update();
     //     print_grid();
     // }
+
+    print_grid(grid_1, grid_size);
 
     free(grid_1);
     free(grid_2);
