@@ -4,7 +4,7 @@
 #include <stdlib.h>
 #include <sys/time.h>
 
-#define DENSITY 0.10
+#define DENSITY 0.05
 
 // Procedimento auxiliar para inicializar o gerador de 
 // numeros pseudo-aleatorios (PRNG).
