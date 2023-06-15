@@ -1,7 +1,7 @@
 #include "lga_base.h"
 #include "lga_omp.h"
 
-static void update(byte* grid_in, byte* grid_out, int grid_size) {
+static void update(byte *grid_in, byte *grid_out, int grid_size) {
     for (int i = 0; i < grid_size; i++) {
         for (int j = 0; j < grid_size; j++) {
             for (int dir = 0; dir < NUM_DIRECTIONS; dir++) {
@@ -33,7 +33,7 @@ static void update(byte* grid_in, byte* grid_out, int grid_size) {
     }
 }
 
-void simulate_omp(byte* grid_1, byte* grid_2, int grid_size, int num_threads) {
+void simulate_omp(byte *grid_1, byte *grid_2, int grid_size, int num_threads) {
     for (int i = 0; i < ITERATIONS/2; i++) {
         update(grid_1, grid_2, grid_size);
         update(grid_2, grid_1, grid_size);

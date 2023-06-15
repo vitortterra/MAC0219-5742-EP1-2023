@@ -3,7 +3,7 @@
 
 // Atualiza o LGA a partir do estado em grid_in,
 // escrevendo o resultado em grid_out
-static void update(byte* grid_in, byte* grid_out, int grid_size) {
+static void update(byte *grid_in, byte *grid_out, int grid_size) {
     // Etapa de propagacao: atualiza posicoes
     // e verifica colisoes com paredes
     for (int i = 0; i < grid_size; i++) {
@@ -48,7 +48,7 @@ static void update(byte* grid_in, byte* grid_out, int grid_size) {
 
 // Simula ITERATIONS iteracoes do LGA de forma sequencial,
 // a partir do estado inicial lido em initialize_grids
-void simulate_seq(byte* grid_1, byte* grid_2, int grid_size) {
+void simulate_seq(byte *grid_1, byte *grid_2, int grid_size) {
     // Alterna entre grid_1 e grid_2 como grid "prinicipal"
     // para evitar copias desnecessarias de um para o outro
     for (int i = 0; i < ITERATIONS/2; i++) {
