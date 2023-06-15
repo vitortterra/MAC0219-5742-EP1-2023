@@ -6,13 +6,13 @@ CC_PTH = -pthread
 all: check time_test grid_gen
 
 check: check.o lga_base.o lga_seq.o lga_omp.o lga_pth.o
-	$(CC) $(CFLAGS) -o $@ $^
+	$(CC) $(CFLAGS) $(CC_OMP) $(CC_PTH) -o $@ $^
 
 check.o: check.c lga_base.o
 	$(CC) $(CFLAGS) -c $<
 
 time_test: time_test.o lga_base.o lga_seq.o lga_omp.o lga_pth.o time_extra.o
-	$(CC) $(CFLAGS) -o $@ $^
+	$(CC) $(CFLAGS) $(CC_OMP) $(CC_PTH) -o $@ $^
 
 time_test.o: time_test.c lga_base.o
 	$(CC) $(CFLAGS) -c $<
