@@ -8,13 +8,22 @@
 #include <string.h>
 #include <stdbool.h>
 
-void parse_arguments(int argc, char* argv[], int* grid_size_ptr, int* num_threads_ptr) {
+#define NOT_READ -1
+
+void print_usage_message() {
+    printf("Uso: ./check --grid_size <grid_size> --num_threads <num_threads>\n");
+}
+
+void parse_arguments(int argc, char *argv[], int *grid_size_ptr, int *num_threads_ptr) {
     int ret;
 
-    if (argc != 5){
-        printf("Uso: ./check --grid_size <grid_size> --num_threads <num_threads>\n");
+    if (argc != 5) {
+        print_usage_message();
         exit(EXIT_FAILURE);
     }
+
+    *grid_size_ptr = NOT_READ;
+    *num_threads_ptr = NOT_READ;
 
     for (int i = 0; i < argc-1; i++) {
         if (strcmp(argv[i], "--grid_size") == 0) {
@@ -32,6 +41,11 @@ void parse_arguments(int argc, char* argv[], int* grid_size_ptr, int* num_thread
                 exit(EXIT_FAILURE);
             }
         }
+    }
+
+    if (*grid_size_ptr == NOT_READ || *num_threads_ptr == NOT_READ) {
+        print_usage_message();
+        exit(EXIT_FAILURE);
     }
 
     if (*grid_size_ptr < MIN_GRID_SIZE || *grid_size_ptr > MAX_GRID_SIZE) {
@@ -55,10 +69,10 @@ bool are_grids_equal(byte* grid_a, byte* grid_b, int grid_size) {
     return true;
 }
 
-int main(int argc, char* argv[]) {
-    byte* grid_ref;
-    byte* grid_1;
-    byte* grid_2;
+int main(int argc, char *argv[]) {
+    byte *grid_ref;
+    byte *grid_1;
+    byte *grid_2;
     int grid_size, num_threads;
 
     parse_arguments(argc, argv, &grid_size, &num_threads);
@@ -67,11 +81,12 @@ int main(int argc, char* argv[]) {
     grid_1 = allocate_grid(grid_size);
     grid_2 = allocate_grid(grid_size);
 
+    printf("Check grid_size=%d, num_threads=%d\n", grid_size, num_threads);
+    printf("Executando versao sequencial...\n");
     initialize_grids(grid_ref, grid_2, grid_size);
     simulate_seq(grid_ref, grid_2, grid_size);
 
-    printf("grid_size=%d, num_threads=%d\n", grid_size, num_threads);
-
+    printf("Executando versao OpenMP...\n");
     initialize_grids(grid_1, grid_2, grid_size);
     simulate_omp(grid_1, grid_2, grid_size, num_threads);
 
@@ -80,6 +95,7 @@ int main(int argc, char* argv[]) {
     else
         printf("Resultado OpenMP DIFERENTE do sequencial\n");
     
+    printf("Executando versao Pthreads...\n");
     initialize_grids(grid_1, grid_2, grid_size);
     simulate_pth(grid_1, grid_2, grid_size, num_threads);
 
