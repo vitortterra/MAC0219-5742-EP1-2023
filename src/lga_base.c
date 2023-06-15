@@ -6,19 +6,24 @@
 #include <stdbool.h>
 
 /*
-   2   1
-    \ /
-  3 - - 0
-    / \
-   4   5
+    Vetor que indica as coordenadas do vizinho de cada posicao i,j no grid hexagonal
+    Vizinho de i,j == i + directions[i%2][dir][0], j + directions[i%2][dir][1]
+    dir = 0, 1, 2, 3, 4 ou 5 de acordo com o esquema:
+
+     2   1
+      \ /
+    3 - - 0
+      / \
+     4   5
 */
 int directions[2][6][2] = {
     {{0, 1}, {-1, 1}, {-1, 0}, {0, -1}, {1, 0}, {1, 1}},
     {{0, 1}, {-1, 0}, {-1, -1}, {0, -1}, {1, -1}, {1, 0}}
 };
 
-byte* allocate_grid(int grid_size) {
-    byte* grid = (byte*) calloc(grid_size*grid_size, sizeof(byte));
+// Aloca grid na memoria
+byte *allocate_grid(int grid_size) {
+    byte *grid = (byte*) calloc(grid_size*grid_size, sizeof(byte));
 
     if (!grid) {
         fprintf(stderr, "Error allocating grid\n");
@@ -28,8 +33,9 @@ byte* allocate_grid(int grid_size) {
     return grid;
 }
 
-void read_grid_from_file(byte* grid, int grid_size) {
-    FILE* file_ptr;
+// Le o estado inicial do grid de um arquivo x.in, onde x == grid_size
+void read_grid_from_file(byte *grid, int grid_size) {
+    FILE *file_ptr;
     char filename[8];
 
     snprintf(filename, sizeof(filename), "%d.in", grid_size);
@@ -50,11 +56,14 @@ void read_grid_from_file(byte* grid, int grid_size) {
     fclose(file_ptr);
 }
 
-void initialize_grids(byte* grid_1, byte* grid_2, int grid_size) {
+// Determina o valor inicial dos grids, lendo o grid_1 do arquivo
+// e copiando inicialmente apenas as paredes pra o grid_2
+void initialize_grids(byte *grid_1, byte *grid_2, int grid_size) {
     read_grid_from_file(grid_1, grid_size);
 
-    // Como as paredes sao fixas, basta inseri-las no grid auxiliar
-    // durante a inicializacao
+    // Como as paredes sao fixas durante a simulacao,
+    // basta inseri-las no grid auxiliar
+    // uma vez durante a inicializacao
     for (int idx = 0; idx < grid_size*grid_size; idx++) {
         if (grid_1[idx] == WALL)
             grid_2[idx] = WALL;
@@ -63,7 +72,9 @@ void initialize_grids(byte* grid_1, byte* grid_2, int grid_size) {
     }
 }
 
-void wall_collision(int i, int j, byte* grid_out, int grid_size, int dir) {
+// Tentativa de implementar uma colisao um pouco mais realista com
+// as paredes, que nao seja apenas uma reflexao simples
+void wall_collision(int i, int j, byte *grid_out, int grid_size, int dir) {
     // Reflexao simples:
     // byte dir_mask = 0x01 << dir;
     // grid_out[ind2d(i,j)] |= ((dir_mask << 3) | (dir_mask >> 3)) % WALL;
@@ -108,6 +119,7 @@ void wall_collision(int i, int j, byte* grid_out, int grid_size, int dir) {
     }
 }
 
+// Logica de colisao entre particulas de acordo com o modelo
 byte particles_collision(byte cell) {
     switch (cell) {
         // Colisao entre duas particulas
@@ -137,7 +149,9 @@ byte particles_collision(byte cell) {
     }
 }
 
-void print_grid(byte* grid, int grid_size) {
+// Imprime o estado atual da simulacao para debug,
+// mostrando particulas (*) e paredes (#)
+void print_grid(byte *grid, int grid_size) {
     for (int i = 0; i < grid_size; i++) {
 
         // Para ter aparencia hexagonal
@@ -158,7 +172,9 @@ void print_grid(byte* grid, int grid_size) {
     }
 }
 
-void print_grid_animation(byte* grid, int grid_size) {
+// Imprime o estado atual da simulacao para gerar uma 
+// animacao ASCII da simulacao
+void print_grid_animation(byte *grid, int grid_size) {
     for (int i = 0; i < grid_size; i++) {
         printf("\"");
         if (i % 2 == 0)
@@ -173,7 +189,8 @@ void print_grid_animation(byte* grid, int grid_size) {
             else
                 printf("* ");
         }
-        // TODO: remove trailing comma after last frame
+        // TODO: remover ultima virgula no arquivo
+        // Do jeito que esta, isso deve ser feito manualmente
         if (i == grid_size - 1)
             printf("\"+a,\n");
         else
@@ -181,7 +198,9 @@ void print_grid_animation(byte* grid, int grid_size) {
     }
 }
 
-void print_grid_numbers(byte* grid, int grid_size) {
+// Imprime o estado atual da simulacao para debug,
+// mostrando o valor numerico de cada celula
+void print_grid_numbers(byte *grid, int grid_size) {
     for (int i = 0; i < grid_size; i++) {
         for (int j = 0; j < grid_size; j++) {
             printf("%-3d", grid[ind2d(i,j)]);

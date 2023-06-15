@@ -20,7 +20,7 @@ void initialize_prng(void)
     srand(total_us);
 }
 
-void generate_grid(byte* grid, int grid_size) {
+void generate_grid(byte *grid, int grid_size) {
     int dir;
     
     for (int i = 0; i < grid_size; i++) {
@@ -40,8 +40,8 @@ void generate_grid(byte* grid, int grid_size) {
     }
 }
 
-void write_grid_to_file(byte* grid, int grid_size) {
-    FILE* file_ptr;
+void write_grid_to_file(byte *grid, int grid_size) {
+    FILE *file_ptr;
     char filename[8];
 
     snprintf(filename, sizeof(filename), "%d.in", grid_size);
@@ -62,8 +62,8 @@ void write_grid_to_file(byte* grid, int grid_size) {
     fclose(file_ptr);
 }
 
-int main(int argc, char* argv[]) {
-    byte* grid;
+int main(int argc, char *argv[]) {
+    byte *grid;
     int grid_size;
 
     if (argc != 2){
