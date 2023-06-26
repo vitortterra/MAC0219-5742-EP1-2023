@@ -1,7 +1,7 @@
 #include "lga_base.h"
 #include "lga_omp.h"
 
-static byte get_next_cell(int i, int j, byte *grid_in, byte *grid_out, int grid_size) {
+static byte get_next_cell(int i, int j, byte *grid_in, int grid_size) {
     byte next_cell = EMPTY;
 
     for (int dir = 0; dir < NUM_DIRECTIONS; dir++) {
@@ -32,7 +32,7 @@ static void update(byte *grid_in, byte *grid_out, int grid_size) {
             if (grid_in[ind2d(i,j)] == WALL) 
                 grid_out[ind2d(i,j)] = WALL;
             else 
-                grid_out[ind2d(i,j)] = get_next_cell(i, j, grid_in, grid_out, grid_size);
+                grid_out[ind2d(i,j)] = get_next_cell(i, j, grid_in, grid_size);
         }
     }
 }
