@@ -3,7 +3,7 @@
 
 // Encontra o proximo estado da celula em (i, j): grid_out[ind2d(i,j)],
 // a partir do estado atual (grid_in)
-byte get_next_cell(int i, int j, byte *grid_in, byte *grid_out, int grid_size) {
+static byte get_next_cell(int i, int j, byte *grid_in, byte *grid_out, int grid_size) {
     byte next_cell = EMPTY;
 
     // Etapa de propagacao:

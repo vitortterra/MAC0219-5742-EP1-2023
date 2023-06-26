@@ -72,53 +72,6 @@ void initialize_grids(byte *grid_1, byte *grid_2, int grid_size) {
     }
 }
 
-// Tentativa de implementar uma colisao um pouco mais realista com
-// as paredes, que nao seja apenas uma reflexao simples
-void wall_collision(int i, int j, byte *grid_out, int grid_size, int dir) {
-    // Reflexao simples:
-    // byte dir_mask = 0x01 << dir;
-    // grid_out[ind2d(i,j)] |= ((dir_mask << 3) | (dir_mask >> 3)) % WALL;
-
-    if (dir == 0) {
-        grid_out[ind2d(i,j)] |= 0x08;
-    }
-    else if (dir == 1) {
-        if (inbounds(i-2, j, grid_size) && grid_out[ind2d(i-2,j)] != WALL)
-            grid_out[ind2d(i-2,j)] |= 0x04;
-        else if (inbounds(i, j+1, grid_size) && grid_out[ind2d(i,j+1)] != WALL)
-            grid_out[ind2d(i,j+1)] |= 0x20;
-        else
-            grid_out[ind2d(i,j)] |= 0x10;
-
-    } else if (dir == 2) {
-        if (inbounds(i-2, j, grid_size) && grid_out[ind2d(i-2,j)] != WALL)
-            grid_out[ind2d(i-2,j)] |= 0x02;
-        else if (inbounds(i, j-1, grid_size) && grid_out[ind2d(i,j-1)] != WALL)
-            grid_out[ind2d(i,j-1)] |= 0x10;
-        else
-            grid_out[ind2d(i,j)] |= 0x20;
-
-    } else if (dir == 3) {
-        grid_out[ind2d(i,j)] |= 0x01;
-
-    } else if (dir == 4) {
-        if (inbounds(i+2, j, grid_size) && grid_out[ind2d(i+2,j)] != WALL)
-            grid_out[ind2d(i+2,j)] |= 0x20;
-        else if (inbounds(i, j-1, grid_size) && grid_out[ind2d(i,j-1)] != WALL)
-            grid_out[ind2d(i,j-1)] |= 0x04;
-        else
-            grid_out[ind2d(i,j)] |= 0x02;
-
-    } else if (dir == 5) {
-        if (inbounds(i+2, j, grid_size) && grid_out[ind2d(i+2,j)] != WALL)
-            grid_out[ind2d(i+2,j)] |= 0x10;
-        else if (inbounds(i, j+1, grid_size) && grid_out[ind2d(i,j+1)] != WALL)
-            grid_out[ind2d(i,j+1)] |= 0x02;
-        else
-            grid_out[ind2d(i,j)] |= 0x04;
-    }
-}
-
 // Verifica se a particula esta indo para um dos cantos entre duas paredes
 bool is_corner(int i, int j, byte *grid_in, int grid_size, int dir) {
     if (dir == 0 || dir == 3)
@@ -147,9 +100,8 @@ bool is_corner(int i, int j, byte *grid_in, int grid_size, int dir) {
 // as paredes, buscando conservar o momento na direcao paralela a parede.
 // Verifica se houve colisao com a parede que possa levar uma nova particula
 // ateh a celula (i,j). Nesse caso, retorna a direcao dessa nova particula em (i,j).
-// Assume paredes no grid na vertical ou na horizontal, nao na vertical ou pecas soltas.
+// Assume paredes no grid na vertical ou na horizontal, nao na diagonal ou celulas isoladas.
 byte from_wall_collision(int i, int j, byte *grid_in, int grid_size, int dir) {
-
     // rev_dir: direcao oposta a dir
     int rev_dir = (dir + NUM_DIRECTIONS/2) % NUM_DIRECTIONS;
     byte rev_dir_mask = 0x01 << rev_dir;
