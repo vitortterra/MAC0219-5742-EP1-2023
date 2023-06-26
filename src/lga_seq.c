@@ -24,9 +24,9 @@ byte get_next_cell(int i, int j, byte *grid_in, byte *grid_out, int grid_size) {
         if (inbounds(n_i, n_j, grid_size)) {
 
             // Se o vizinho for parede, eh possivel que apareca
-            // em (i, j) uma particula que colidgit addiu com a parede
+            // em (i, j) uma particula que colidiu com a parede
             if (grid_in[ind2d(n_i,n_j)] == WALL) {
-                // TODO: handle wall collision
+                next_cell |= from_wall_collision(i, j, grid_in, grid_size, dir);
             } 
             // Caso haja uma particula vindo do vizinho para a celula,
             // atualiza a celula colocando nela essa particula
