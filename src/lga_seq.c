@@ -38,7 +38,7 @@ byte get_next_cell(int i, int j, byte *grid_in, byte *grid_out, int grid_size) {
 
     // Etapa de colisao: verifica se apos a propagacao, 
     // houve colisao entre particulas em (i, j)
-    return particles_collision(next_cell);
+    return check_particles_collision(next_cell);
 }
 
 // Atualiza o LGA a partir do estado em grid_in,

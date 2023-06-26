@@ -28,7 +28,7 @@ static void update(byte *grid_in, byte *grid_out, int grid_size) {
 
     for (int i = 0; i < grid_size; i++) {
         for (int j = 0; j < grid_size; j++) {
-            grid_out[ind2d(i,j)] = particles_collision(grid_out[ind2d(i,j)]);
+            grid_out[ind2d(i,j)] = check_particles_collision(grid_out[ind2d(i,j)]);
         }
     }
 }

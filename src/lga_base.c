@@ -120,7 +120,7 @@ void wall_collision(int i, int j, byte *grid_out, int grid_size, int dir) {
 }
 
 // Logica de colisao entre particulas de acordo com o modelo
-byte particles_collision(byte cell) {
+byte check_particles_collision(byte cell) {
     switch (cell) {
         // Colisao entre duas particulas
         case 0x09:
