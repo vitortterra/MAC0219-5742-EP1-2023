@@ -35,7 +35,7 @@ lga_seq.o: lga_seq.c lga_seq.h lga_base.o
 lga_omp.o: lga_omp.c lga_omp.h lga_base.o
 	$(CC) $(CFLAGS) $(CC_OMP) -c $<
 
-lga_pth.o: lga_pth.c lga_pth.h lga_base.o
+lga_pth.o: lga_pth.c pthread_barrier.h lga_pth.h lga_base.o
 	$(CC) $(CFLAGS) $(CC_PTH) -c $<
 
 grid_gen: grid_gen.o lga_base.o
