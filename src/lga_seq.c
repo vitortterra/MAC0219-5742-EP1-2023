@@ -27,7 +27,7 @@ static byte get_next_cell(int i, int j, byte *grid_in, int grid_size) {
             // em (i, j) uma particula que colidiu com a parede
             if (grid_in[ind2d(n_i,n_j)] == WALL) {
                 next_cell |= from_wall_collision(i, j, grid_in, grid_size, dir);
-            } 
+            }
             // Caso haja uma particula vindo do vizinho para a celula,
             // atualiza a celula colocando nela essa particula
             else if (grid_in[ind2d(n_i, n_j)] & rev_dir_mask) {
@@ -36,7 +36,7 @@ static byte get_next_cell(int i, int j, byte *grid_in, int grid_size) {
         }
     }
 
-    // Etapa de colisao: verifica se apos a propagacao, 
+    // Etapa de colisao: verifica se apos a propagacao,
     // houve colisao entre particulas em (i, j)
     return check_particles_collision(next_cell);
 }
@@ -46,9 +46,9 @@ static byte get_next_cell(int i, int j, byte *grid_in, int grid_size) {
 static void update(byte *grid_in, byte *grid_out, int grid_size) {
     for (int i = 0; i < grid_size; i++) {
         for (int j = 0; j < grid_size; j++) {
-            if (grid_in[ind2d(i,j)] == WALL) 
+            if (grid_in[ind2d(i,j)] == WALL)
                 grid_out[ind2d(i,j)] = WALL;
-            else 
+            else
                 grid_out[ind2d(i,j)] = get_next_cell(i, j, grid_in, grid_size);
         }
     }

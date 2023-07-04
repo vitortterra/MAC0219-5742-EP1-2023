@@ -201,7 +201,7 @@ void print_grid(byte *grid, int grid_size) {
     }
 }
 
-// Imprime o estado atual da simulacao para gerar uma 
+// Imprime o estado atual da simulacao para gerar uma
 // animacao ASCII da simulacao
 void print_grid_animation(byte *grid, int grid_size) {
     for (int i = 0; i < grid_size; i++) {
