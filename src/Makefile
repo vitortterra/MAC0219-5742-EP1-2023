@@ -40,4 +40,4 @@ time_extra.o: time_extra.c time_extra.h
 
 .PHONY: clean
 clean:
-	rm *.o check time_test grid_gen
+	rm -f *.o check time_test grid_gen
