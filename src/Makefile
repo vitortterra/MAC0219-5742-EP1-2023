@@ -1,18 +1,30 @@
-CC     = gcc
+UNAME_S := $(shell uname -s)
+
+ifeq ($(UNAME_S),Linux)
+    CC     = gcc
+    CC_OMP = -fopenmp
+    CC_PTH = -pthread
+endif
+ifeq ($(UNAME_S),Darwin)    # Darwin is for MacOS
+    CC = /opt/homebrew/opt/llvm/bin/clang
+    CC_OMP = -fopenmp=libomp
+    CC_PTH = -pthread
+    LDFLAGS = -L/opt/homebrew/opt/llvm/lib -Wl,-rpath,/opt/homebrew/opt/llvm/lib
+    CPPFLAGS = -I/opt/homebrew/opt/llvm/include
+endif
+
 CFLAGS = -Wall -pedantic -O2 -std=c11
-CC_OMP = -fopenmp
-CC_PTH = -pthread
 
 all: check time_test grid_gen
 
 check: check.o lga_base.o lga_seq.o lga_omp.o lga_pth.o
-	$(CC) $(CFLAGS) $(CC_OMP) $(CC_PTH) -o $@ $^
+	$(CC) $(CFLAGS) $(CC_OMP) $(CC_PTH) -o $@ $^ $(LDFLAGS)
 
 check.o: check.c lga_base.o
 	$(CC) $(CFLAGS) -c $<
 
 time_test: time_test.o lga_base.o lga_seq.o lga_omp.o lga_pth.o time_extra.o
-	$(CC) $(CFLAGS) $(CC_OMP) $(CC_PTH) -o $@ $^
+	$(CC) $(CFLAGS) $(CC_OMP) $(CC_PTH) -o $@ $^ $(LDFLAGS)
 
 time_test.o: time_test.c lga_base.o
 	$(CC) $(CFLAGS) -c $<
